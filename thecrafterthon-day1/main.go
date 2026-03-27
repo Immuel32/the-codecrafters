@@ -14,7 +14,7 @@ func main() {
 		fmt.Scan(&num1)
 		num1, err := strconv.ParseFloat(num1, 64)
 		if err != nil {
-			fmt.Println("Invalid")
+			fmt.Println("Invalid Input")
 			continue
 		}
 
@@ -22,7 +22,8 @@ func main() {
 		fmt.Scan(&num2)
 		num2, err := strconv.ParseFloat(num2, 64)
 		if err != nil {
-			fmt.Println("Invalid")
+			fmt.Println("Invalid Input")
+			continue
 		}
 
 		fmt.Println("Select an operator: ")
