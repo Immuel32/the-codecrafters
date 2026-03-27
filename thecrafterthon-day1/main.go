@@ -2,18 +2,28 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 )
 
 func main() {
-	var num1 float64
-	var num2 float64
+	var num1 string
+	var num2 string
 
 	for {
 		fmt.Println("Enter the first number")
 		fmt.Scan(&num1)
+		num1, err := strconv.ParseFloat(num1, 64)
+		if err != nil {
+			fmt.Println("Invalid")
+			continue
+		}
 
 		fmt.Println("Enter the second number")
 		fmt.Scan(&num2)
+		num2, err := strconv.ParseFloat(num2, 64)
+		if err != nil {
+			fmt.Println("Invalid")
+		}
 
 		fmt.Println("Select an operator: ")
 		fmt.Println("1: Addition|| 2: Sutraction|| 3: Multiplication|| 4: Division| |5: Exit|| 6: Help")
