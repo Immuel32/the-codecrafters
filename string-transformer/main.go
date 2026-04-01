@@ -1,3 +1,8 @@
+// CodeCrafters — Operation Gopher Protocol
+// Module: String Transformer
+// Author: Emmanuel Elaigwu
+// Squad:  The Gophers Group
+
 package main
 
 import (
@@ -5,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode"
 )
 
 func ToUpper(s string) string {
@@ -15,14 +21,16 @@ func ToLower(s string) string {
 	return strings.ToLower(s)
 }
 
-func Capitalize(s string) string {
-	w := strings.Fields(s)
-	for i := range w {
-		if len(w[i]) > 0 {
-			w[i] = strings.ToUpper(string(w[i][0])) + strings.ToLower(w[i][1:])
+func Capitalize(word string) string {
+	words := strings.Fields(word)
+	for i, ch := range words {
+		runes := []rune(strings.ToLower(ch))
+		if len(runes) > 0 {
+			runes[0] = unicode.ToUpper(runes[0])
 		}
+		words[i] = string(runes)
 	}
-	return strings.Join(w, " ")
+	return strings.Join(words, " ")
 }
 
 func snakeCase(s string) string {
@@ -62,7 +70,7 @@ func reverseWord(s string) string {
 }
 
 func main() {
-	fmt.Println("==== String Transformer ====")
+	fmt.Println("==== String Transformer ====\n")
 	for {
 		reader := bufio.NewReader(os.Stdin)
 
@@ -76,10 +84,10 @@ func main() {
 		}
 
 		fmt.Println("\nChoose a transformation:")
-		fmt.Println("1) upper      → All UPPERCASE")
-		fmt.Println("2) lower      → All lowercase")
-		fmt.Println("3) capitalize → Capitalize Each Word")
-		fmt.Println("4) reverse    → Reverse Word Order")
+		fmt.Println("1) upper      >> All UPPERCASE")
+		fmt.Println("2) lower      >> All lowercase")
+		fmt.Println("3) capitalize >> Capitalize Each Word")
+		fmt.Println("4) reverse    >> Reverse Word Order")
 
 		fmt.Print("Enter choice (1-4): ")
 		choice, _ := reader.ReadString('\n')
