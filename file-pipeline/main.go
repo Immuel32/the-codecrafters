@@ -44,10 +44,11 @@ import (
 	"os"
 	"strings"
 )
+
 func TrimWhiteSpaces(line string) string {
 	return strings.TrimSpace(line)
 }
-func ReplaceToDo(line string) string{
+func ReplaceToDo(line string) string {
 	return strings.ReplaceAll(line, "TODO:", "Action:")
 
 }
@@ -58,15 +59,15 @@ func AllCapsToTitle(line string) string {
 			words[i] = strings.Title(words[i])
 
 		}
-        return strings.Join(words, " ")
+		return strings.Join(words, " ")
 	}
 	return line
 }
-func Lower(line string) string{
+func Lower(line string) string {
 	return strings.ToUpper(line)
 }
-func reverseWord(s string) string{
-	 w := strings.Fields(s)
+func reverseWord(s string) string {
+	w := strings.Fields(s)
 	for i, j := 0, len(w)-1; i < j; i, j = i+1, j-1 {
 		w[i], w[j] = w[j], w[i]
 	}
@@ -74,7 +75,7 @@ func reverseWord(s string) string{
 }
 func main() {
 	if len(os.Args)-1 != 3 {
-		fmt.Println("Usage: go run . <input.txt> <output.txt>" )
+		fmt.Println("Usage: go run . <input.txt> <output.txt>")
 		return
 	}
 	inputFile := os.Args[1]
@@ -82,12 +83,12 @@ func main() {
 
 	if inputFile == outputFile {
 		fmt.Println("input file and output file cannot be the same")
+		return
 	}
-	return
-}
-in, err := os.Open(inputFile)
+
+	in, err := os.Open(inputFile)
 	if err != nil {
-		fmt.Printf("✗ File not found: %s\n", inputFile)
+		fmt.Printf("File not found: %s\n", inputFile)
 		return
 	}
 	defer in.Close()
@@ -97,19 +98,55 @@ in, err := os.Open(inputFile)
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
-	lineRead := len(line)
-	linesRemove = 0 
 
-	if lineRead == 0{
-		fmt.Println("Inputline is empty. Nothing to Process")
+	linesRead := len(lines)
+	linesRemoved := 0
+
+	if linesRead == 0 {
+		fmt.Println("Input file is empty. Nothing to process.")
+		return
 	}
 
-	var Processed []string
-
-	for _, line range line {
-		line = TrimWhiteSpaces(lines)
-		lines = ReplaceTODO(lines)
-		lines = AllCapsToTitle(lines)
-		continue
+	transformations := []func(string) string{
+		TrimWhiteSpaces,
+		ReplaceToDo,
+		AllCapsToTitle,
+		Lower,
+		reverseWord,
 	}
-	Processed = append(Processed, line)
+
+	var processed []string
+	for _, line := range lines {
+		for _, fn := range transformations {
+			line = fn(line)
+		}
+		processed = append(processed, line)
+	}
+	for i := range processed {
+		processed[i] = fmt.Sprintf("%03d. %s", i+1, processed[i])
+	}
+	out, err := os.Create(outputFile)
+	if err != nil {
+		fmt.Printf("Cannot write to output: %s\n", outputFile)
+		return
+	}
+	defer out.Close()
+
+	fmt.Fprintln(out, "Gopher's Sentinel Field Report - Processed")
+
+	for _, line := range processed {
+		fmt.Fprintln(out, line)
+	}
+
+	fmt.Fprintln(out, "\n--- Summary ---")
+	fmt.Fprintf(out, "Lines read    : %d\n", linesRead)
+	fmt.Fprintf(out, "Lines written : %d\n", len(processed))
+	fmt.Fprintf(out, "Lines removed : %d\n", linesRemoved)
+	fmt.Fprintf(out, "Rules applied : TrimWhitespace, ReplaceTODO, AllCapsToTitle, Lower, reverseWord\n")
+
+	fmt.Println("\n--- Terminal Summary ---")
+	fmt.Printf("✦ Lines read    : %d\n", linesRead)
+	fmt.Printf("✦ Lines written : %d\n", len(processed))
+	fmt.Printf("✦ Lines removed : %d\n", linesRemoved)
+	fmt.Printf("✦ Rules applied : TrimWhitespace, ReplaceTODO, AllCapsToTitle, lower, reverseWord\n")
+}
