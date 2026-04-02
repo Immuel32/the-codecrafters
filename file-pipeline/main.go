@@ -36,6 +36,7 @@
 //	✦ Rules applied : [our 5 rules]
 //
 // ═══════════════════════════════════════════
+
 package main
 
 import (
@@ -45,46 +46,52 @@ import (
 	"strings"
 )
 
-func TrimWhiteSpaces(line string) string {
+func TrimWhitespace(line string) string {
 	return strings.TrimSpace(line)
 }
-func ReplaceToDo(line string) string {
-	return strings.ReplaceAll(line, "TODO:", "Action:")
 
+func ReplaceTODO(line string) string {
+	return strings.ReplaceAll(line, "TODO:", "ACTION:")
 }
+
 func AllCapsToTitle(line string) string {
 	if line == strings.ToUpper(line) && len(line) > 0 {
 		words := strings.Fields(strings.ToLower(line))
 		for i := range words {
 			words[i] = strings.Title(words[i])
-
 		}
 		return strings.Join(words, " ")
 	}
 	return line
 }
+
 func Lower(line string) string {
-	return strings.ToUpper(line)
+	return strings.ToLower(line)
 }
-func reverseWord(s string) string {
-	w := strings.Fields(s)
-	for i, j := 0, len(w)-1; i < j; i, j = i+1, j-1 {
-		w[i], w[j] = w[j], w[i]
+
+func ReverseWordsIfContainsReverse(line string) string {
+	if !strings.Contains(strings.ToLower(line), "reverse") {
+		return line
 	}
-	return strings.Join(w, " ")
+	words := strings.Fields(line)
+	for i := range words {
+		runes := []rune(words[i])
+		for j, k := 0, len(runes)-1; j < k; j, k = j+1, k-1 {
+			runes[j], runes[k] = runes[k], runes[j]
+		}
+		words[i] = string(runes)
+	}
+	return strings.Join(words, " ")
 }
+
 func main() {
-	if len(os.Args)-1 != 3 {
-		fmt.Println("Usage: go run . <input.txt> <output.txt>")
+	if len(os.Args) != 3 {
+		fmt.Println("Usage: go run main.go <input.txt> <output.txt>")
 		return
 	}
+
 	inputFile := os.Args[1]
 	outputFile := os.Args[2]
-
-	if inputFile == outputFile {
-		fmt.Println("input file and output file cannot be the same")
-		return
-	}
 
 	in, err := os.Open(inputFile)
 	if err != nil {
@@ -99,32 +106,26 @@ func main() {
 		lines = append(lines, scanner.Text())
 	}
 
-	linesRead := len(lines)
-	linesRemoved := 0
-
-	if linesRead == 0 {
-		fmt.Println("Input file is empty. Nothing to process.")
-		return
-	}
-
+	var processed []string
 	transformations := []func(string) string{
-		TrimWhiteSpaces,
-		ReplaceToDo,
+		TrimWhitespace,
+		ReplaceTODO,
 		AllCapsToTitle,
 		Lower,
-		reverseWord,
+		ReverseWordsIfContainsReverse,
 	}
 
-	var processed []string
 	for _, line := range lines {
 		for _, fn := range transformations {
 			line = fn(line)
 		}
 		processed = append(processed, line)
 	}
+
 	for i := range processed {
 		processed[i] = fmt.Sprintf("%03d. %s", i+1, processed[i])
 	}
+
 	out, err := os.Create(outputFile)
 	if err != nil {
 		fmt.Printf("Cannot write to output: %s\n", outputFile)
@@ -133,20 +134,19 @@ func main() {
 	defer out.Close()
 
 	fmt.Fprintln(out, "Gopher's Sentinel Field Report - Processed")
-
 	for _, line := range processed {
 		fmt.Fprintln(out, line)
 	}
 
-	fmt.Fprintln(out, "\n--- Summary ---")
+	fmt.Fprintln(out, "\n-----summary-----")
 	fmt.Fprintf(out, "Lines read    : %d\n", linesRead)
 	fmt.Fprintf(out, "Lines written : %d\n", len(processed))
 	fmt.Fprintf(out, "Lines removed : %d\n", linesRemoved)
 	fmt.Fprintf(out, "Rules applied : TrimWhitespace, ReplaceTODO, AllCapsToTitle, Lower, reverseWord\n")
 
 	fmt.Println("\n--- Terminal Summary ---")
-	fmt.Printf("✦ Lines read    : %d\n", linesRead)
-	fmt.Printf("✦ Lines written : %d\n", len(processed))
-	fmt.Printf("✦ Lines removed : %d\n", linesRemoved)
-	fmt.Printf("✦ Rules applied : TrimWhitespace, ReplaceTODO, AllCapsToTitle, lower, reverseWord\n")
+	fmt.Printf("Lines read    : %d\n", linesRead)
+	fmt.Printf("Lines written : %d\n", len(processed))
+	fmt.Printf("Lines removed : %d\n", linesRemoved)
+	fmt.Printf("Rules applied : TrimWhitespace, ReplaceTODO, AllCapsToTitle, lower, reverseWord\n")
 }
