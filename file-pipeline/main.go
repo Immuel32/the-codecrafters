@@ -123,7 +123,7 @@ func main() {
 	}
 
 	for i := range processed {
-		processed[i] = fmt.Sprintf("%03d. %s", i+1, processed[i])
+		processed[i] = fmt.Sprintf("%d. %s", i+1, processed[i])
 	}
 
 	out, err := os.Create(outputFile)
@@ -137,6 +137,9 @@ func main() {
 	for _, line := range processed {
 		fmt.Fprintln(out, line)
 	}
+
+	linesRead := len(lines)
+	linesRemoved := 0
 
 	fmt.Fprintln(out, "\n-----summary-----")
 	fmt.Fprintf(out, "Lines read    : %d\n", linesRead)

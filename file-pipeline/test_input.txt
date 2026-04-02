@@ -1,0 +1,8 @@
+WELCOME TO THE GOPHER FIELD REPORT
+ TODO: Collect all soil samples 
+ TODO: Record water readings 
+ THIS LINE HAS EXTRA SPACES 
+ NORMAL operations should continue 
+ Check this line 
+ END OF REPORT 
+ MIXED Case Line With TODO: action reverse needed

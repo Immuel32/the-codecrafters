@@ -1,0 +1,15 @@
+Gopher's Sentinel Field Report - Processed
+1. welcome to the gopher field report
+2. action: collect all soil samples
+3. action: record water readings
+4. this line has extra spaces
+5. normal operations should continue
+6. check this line
+7. end of report
+8. dexim esac enil htiw :noitca noitca esrever dedeen
+
+-----summary-----
+Lines read    : 8
+Lines written : 8
+Lines removed : 0
+Rules applied : TrimWhitespace, ReplaceTODO, AllCapsToTitle, Lower, reverseWord
