@@ -1,3 +1,8 @@
+// CodeCrafters — Operation Gopher Protocol
+// Module: String Transformer
+// Author: Emmanuel Elaigwu
+// Squad:  The Gophers Group
+
 package main
 
 import (
